@@ -2494,22 +2494,93 @@ router.get("/account-upgrades", auth, adminOnly, async (req, res) => {
 // -------------------------- Create User (admin only) ------------------------ //
 router.post("/create-user", auth, adminOnly, async (req, res) => {
   try {
-    const { name, email, password } = req.body || {};
-    const cleanEmail = String(email || "").trim().toLowerCase();
+    const {
+      full_name,
+      username,
+      address,
+      city,
+      zipcode,
+      country,
+      phone,
+      email,
+      password,
+      role,
+      is_verified,
+      account_status,
+      copy_trading_status,
+      trading_status,
+    } = req.body || {};
 
-    if (!name || !cleanEmail || !password) {
-      return res.status(400).json({ message: "name, email, password are required" });
+    const cleanEmail = String(email || "").trim().toLowerCase();
+    const cleanUsername = String(username || "").trim();
+    const cleanFullName = String(full_name || "").trim();
+    const cleanAddress = String(address || "").trim();
+    const cleanCity = String(city || "").trim();
+    const cleanCountry = String(country || "").trim();
+    const cleanPhone = String(phone || "").trim();
+    const cleanPassword = String(password || "");
+    const cleanRole = String(role || "user").trim().toLowerCase() === "admin" ? "admin" : "user";
+    const verified = Number(is_verified) === 1 ? 1 : 0;
+    const cleanAccountStatus = String(account_status || "active").trim() || "active";
+    const cleanCopyTradingStatus = String(copy_trading_status || "lock").trim() || "lock";
+    const cleanTradingStatus = String(trading_status || "lock").trim() || "lock";
+
+    if (!cleanFullName || !cleanUsername || !cleanAddress || !cleanCity || !cleanCountry || !cleanPhone || !cleanEmail || !cleanPassword) {
+      return res.status(400).json({
+        message: "full_name, username, address, city, country, phone, email, password are required",
+      });
     }
 
-    const [exists] = await pool.query("SELECT id FROM users WHERE email = ?", [cleanEmail]);
-    if (exists.length) return res.status(409).json({ message: "User already exists" });
+    if (cleanPassword.length < 8) {
+      return res.status(400).json({ message: "Password must be at least 8 characters" });
+    }
 
-    const hash = await bcrypt.hash(password, 12);
+    const [existsByEmail] = await pool.query("SELECT id FROM users WHERE email = ? LIMIT 1", [cleanEmail]);
+    if (existsByEmail.length) return res.status(409).json({ message: "Email already registered" });
+
+    const [existsByUsername] = await pool.query("SELECT id FROM users WHERE username = ? LIMIT 1", [cleanUsername]);
+    if (existsByUsername.length) return res.status(409).json({ message: "Username already registered" });
+
+    const hash = await bcrypt.hash(cleanPassword, 12);
 
     const [result] = await pool.query(
-      `INSERT INTO users (name, email, password_hash, role, is_verified, created_at)
-       VALUES (?, ?, ?, 'user', 0, NOW())`,
-      [String(name).trim(), cleanEmail, hash]
+      `
+      INSERT INTO users
+      (
+        full_name,
+        username,
+        address,
+        city,
+        zipcode,
+        country,
+        phone,
+        email,
+        password_hash,
+        role,
+        is_verified,
+        account_status,
+        copy_trading_status,
+        trading_status,
+        created_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+      `,
+      [
+        cleanFullName,
+        cleanUsername,
+        cleanAddress,
+        cleanCity,
+        zipcode ? String(zipcode).trim() : null,
+        cleanCountry,
+        cleanPhone,
+        cleanEmail,
+        hash,
+        cleanRole,
+        verified,
+        cleanAccountStatus,
+        cleanCopyTradingStatus,
+        cleanTradingStatus,
+      ]
     );
 
     // Optional email
@@ -2517,13 +2588,64 @@ router.post("/create-user", auth, adminOnly, async (req, res) => {
       await sendMail({
         to: cleanEmail,
         subject: "Welcome to Oncoinmeta",
-        html: `<p>Hello ${String(name).trim()},</p><p>Your account has been created.</p>`,
+        html: `<p>Hello ${cleanFullName},</p><p>Your account has been created.</p>`,
       });
     } catch (e) {
       console.log("Mail failed:", String(e));
     }
 
-    return res.json({ message: "User created", user_id: result.insertId });
+    return res.json({
+      message: "User created",
+      user_id: result.insertId,
+      user: {
+        id: result.insertId,
+        full_name: cleanFullName,
+        username: cleanUsername,
+        email: cleanEmail,
+        role: cleanRole,
+        is_verified: verified,
+      },
+      password: cleanPassword,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error", error: String(err) });
+  }
+});
+
+// ========================= ADMIN: Set / Reset User Password ========================= //
+router.post("/users/:id/set-password", auth, adminOnly, async (req, res) => {
+  try {
+    const userId = Number(req.params.id);
+    const password = String(req.body.password || "");
+
+    if (!Number.isInteger(userId) || userId <= 0) {
+      return res.status(400).json({ message: "Invalid user id" });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ message: "Password must be at least 8 characters" });
+    }
+
+    const hash = await bcrypt.hash(password, 12);
+
+    const [result] = await pool.query(
+      `
+      UPDATE users
+      SET password_hash = ?, updated_at = NOW()
+      WHERE id = ?
+      `,
+      [hash, userId]
+    );
+
+    if (!result.affectedRows) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.json({
+      message: "User password updated",
+      user_id: userId,
+      password,
+    });
   } catch (err) {
     return res.status(500).json({ message: "Server error", error: String(err) });
   }

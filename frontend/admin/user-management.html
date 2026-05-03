@@ -206,6 +206,7 @@
           </div>
 
           <div class="action-wrap">
+            <button id="btnOpenCreate" class="rounded-2xl btn-primary px-4 py-3 font-extrabold btn-big">Create User</button>
             <button id="btnReload" class="rounded-2xl btn-ghost px-4 py-3 font-extrabold btn-big">Reload</button>
             <button id="btnBootstrapAll" class="rounded-2xl btn-ghost px-4 py-3 font-extrabold btn-big">Bootstrap Crypto (All)</button>
             <button id="btnLogout" class="rounded-2xl btn-ghost px-4 py-3 font-extrabold btn-big">Logout</button>
@@ -435,6 +436,20 @@
               </div>
             </div>
 
+            <div class="mt-4 rounded-3xl card p-4">
+              <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <div class="font-extrabold">Password</div>
+                  <div class="text-sm text-white/60">Stored passwords are hashed. Admin can only view the password assigned in the current create/reset action.</div>
+                </div>
+                <button id="btnSetPassword" class="rounded-2xl btn-ghost px-4 py-3 font-extrabold">Set / Reset Password</button>
+              </div>
+              <div class="mt-3">
+                <label class="text-sm font-semibold text-muted">Last Assigned Password</label>
+                <input id="m_password_visible" readonly class="mt-2 w-full rounded-2xl input px-4 py-3 text-white/80" placeholder="Not available for existing hashed passwords" />
+              </div>
+            </div>
+
             <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button id="btnSaveUser" class="rounded-2xl btn-primary px-5 py-3 font-extrabold">Save Changes</button>
               <button id="btnRefreshUser" class="rounded-2xl btn-ghost px-5 py-3 font-extrabold">Refresh</button>
@@ -505,6 +520,104 @@
     </div>
   </div>
 
+  <!-- Create User Modal -->
+  <div id="createBackdrop" class="modal-backdrop">
+    <div class="glass ring-glow modal-sm">
+      <div class="modal-header">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <div class="text-lg font-extrabold">Create User</div>
+            <div class="text-sm text-white/60">Create a user from the admin panel.</div>
+          </div>
+          <button id="btnCloseCreate" class="rounded-2xl btn-ghost px-4 py-3 font-extrabold">Close</button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="rounded-3xl card p-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-sm font-semibold text-muted">Full Name</label>
+              <input id="c_full_name" class="mt-2 w-full rounded-2xl input px-4 py-3" />
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-muted">Username</label>
+              <input id="c_username" class="mt-2 w-full rounded-2xl input px-4 py-3" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="text-sm font-semibold text-muted">Email</label>
+              <input id="c_email" type="email" class="mt-2 w-full rounded-2xl input px-4 py-3" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="text-sm font-semibold text-muted">Password</label>
+              <input id="c_password" type="text" class="mt-2 w-full rounded-2xl input px-4 py-3" placeholder="Minimum 8 characters" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="text-sm font-semibold text-muted">Address</label>
+              <input id="c_address" class="mt-2 w-full rounded-2xl input px-4 py-3" />
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-muted">City</label>
+              <input id="c_city" class="mt-2 w-full rounded-2xl input px-4 py-3" />
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-muted">Zipcode</label>
+              <input id="c_zipcode" class="mt-2 w-full rounded-2xl input px-4 py-3" />
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-muted">Country</label>
+              <input id="c_country" class="mt-2 w-full rounded-2xl input px-4 py-3" />
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-muted">Phone</label>
+              <input id="c_phone" class="mt-2 w-full rounded-2xl input px-4 py-3" />
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-muted">Verified</label>
+              <select id="c_is_verified" class="mt-2 w-full rounded-2xl input px-4 py-3">
+                <option value="0">0 (No)</option>
+                <option value="1">1 (Yes)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-sm font-semibold text-muted">Role</label>
+              <select id="c_role" class="mt-2 w-full rounded-2xl input px-4 py-3">
+                <option value="user">user</option>
+                <option value="admin">admin</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="btnCreateUser" class="mt-4 w-full rounded-2xl btn-primary py-3 font-extrabold">Create User</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password Modal -->
+  <div id="passwordBackdrop" class="modal-backdrop">
+    <div class="glass ring-glow modal-sm">
+      <div class="modal-header">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <div class="text-lg font-extrabold">Set User Password</div>
+            <div class="text-sm text-white/60" id="passwordSub">—</div>
+          </div>
+          <button id="btnClosePassword" class="rounded-2xl btn-ghost px-4 py-3 font-extrabold">Close</button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="rounded-3xl card p-4">
+          <label class="text-sm font-semibold text-muted">New Password</label>
+          <input id="passwordInput" type="text" class="mt-2 w-full rounded-2xl input px-4 py-3" placeholder="Minimum 8 characters" />
+          <div class="mt-2 text-xs text-white/45">Existing passwords cannot be displayed because only the hash is stored in the database.</div>
+          <button id="btnConfirmSetPassword" class="mt-4 w-full rounded-2xl btn-primary py-3 font-extrabold">Save Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ✅ Admin API base
     const ADMIN_BASE = window.APP_CONFIG.ADMIN_API_BASE;
@@ -527,6 +640,7 @@
     const lastLoaded = document.getElementById("lastLoaded");
 
     const btnReload = document.getElementById("btnReload");
+    const btnOpenCreate = document.getElementById("btnOpenCreate");
     const btnBootstrapAll = document.getElementById("btnBootstrapAll");
     const btnLogout = document.getElementById("btnLogout");
     const btnExport = document.getElementById("btnExport");
@@ -546,6 +660,7 @@
     const btnBootstrapUser = document.getElementById("btnBootstrapUser");
     const btnViewPin = document.getElementById("btnViewPin");
     const btnSetPin = document.getElementById("btnSetPin");
+    const btnSetPassword = document.getElementById("btnSetPassword");
 
     // PIN modal
     const pinBackdrop = document.getElementById("pinBackdrop");
@@ -558,6 +673,18 @@
     const pinInput = document.getElementById("pinInput");
     const btnConfirmSetPin = document.getElementById("btnConfirmSetPin");
 
+    // Create modal
+    const createBackdrop = document.getElementById("createBackdrop");
+    const btnCloseCreate = document.getElementById("btnCloseCreate");
+    const btnCreateUser = document.getElementById("btnCreateUser");
+
+    // Password modal
+    const passwordBackdrop = document.getElementById("passwordBackdrop");
+    const btnClosePassword = document.getElementById("btnClosePassword");
+    const passwordSub = document.getElementById("passwordSub");
+    const passwordInput = document.getElementById("passwordInput");
+    const btnConfirmSetPassword = document.getElementById("btnConfirmSetPassword");
+
     // Manage form fields
     const F = (id) => document.getElementById(id);
 
@@ -567,6 +694,7 @@
     let ALL_USERS = [];
     let FILTERED = [];
     let ACTIVE_USER_ID = null;
+    const LAST_VISIBLE_PASSWORDS = new Map();
 
     function escapeHtml(s){
       return String(s ?? "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
@@ -734,6 +862,7 @@
       F("m_account_status").value = (u.account_status ?? "active");
       F("m_copy_trading_status").value = (u.copy_trading_status ?? "active");
       F("m_trading_status").value = (u.trading_status ?? "active");
+      F("m_password_visible").value = LAST_VISIBLE_PASSWORDS.get(Number(u.id)) || "";
 
       buildCryptoGrid(u.crypto_balances || {});
     }
@@ -917,6 +1046,79 @@
       }
     }
 
+    function collectCreatePayload(){
+      return {
+        full_name: F("c_full_name").value.trim(),
+        username: F("c_username").value.trim(),
+        email: F("c_email").value.trim().toLowerCase(),
+        password: F("c_password").value,
+        address: F("c_address").value.trim(),
+        city: F("c_city").value.trim(),
+        zipcode: F("c_zipcode").value.trim() || null,
+        country: F("c_country").value.trim(),
+        phone: F("c_phone").value.trim(),
+        role: F("c_role").value,
+        is_verified: Number(F("c_is_verified").value) || 0,
+      };
+    }
+
+    function resetCreateForm(){
+      ["c_full_name","c_username","c_email","c_password","c_address","c_city","c_zipcode","c_country","c_phone"].forEach(id => F(id).value = "");
+      F("c_role").value = "user";
+      F("c_is_verified").value = "0";
+    }
+
+    async function createUser(){
+      btnCreateUser.disabled = true; btnCreateUser.classList.add("opacity-70");
+      try {
+        const res = await api().post("/create-user", collectCreatePayload());
+        const createdUserId = Number(res.data?.user_id);
+        const visiblePassword = String(res.data?.password || "");
+
+        if (createdUserId && visiblePassword) {
+          LAST_VISIBLE_PASSWORDS.set(createdUserId, visiblePassword);
+        }
+
+        showAlert("success", res.data?.message || "User created.");
+        closeModal(createBackdrop);
+        resetCreateForm();
+        await loadUsers();
+        if (createdUserId) {
+          await window.openManage(createdUserId);
+        }
+      } catch (err) {
+        showAlert("error", err?.response?.data?.message || "Failed to create user.");
+      } finally {
+        btnCreateUser.disabled = false; btnCreateUser.classList.remove("opacity-70");
+      }
+    }
+
+    function openPasswordModal(){
+      if (!ACTIVE_USER_ID) return;
+      passwordInput.value = "";
+      passwordSub.textContent = `User ID ${ACTIVE_USER_ID}`;
+      openModal(passwordBackdrop);
+    }
+
+    async function confirmSetPassword(){
+      const password = String(passwordInput.value || "");
+      if (password.length < 8) return showAlert("error", "Password must be at least 8 characters.");
+
+      btnConfirmSetPassword.disabled = true; btnConfirmSetPassword.classList.add("opacity-70");
+      try {
+        const res = await api().post(`/users/${ACTIVE_USER_ID}/set-password`, { password });
+        const visiblePassword = String(res.data?.password || password);
+        LAST_VISIBLE_PASSWORDS.set(ACTIVE_USER_ID, visiblePassword);
+        F("m_password_visible").value = visiblePassword;
+        showAlert("success", res.data?.message || "Password updated.");
+        closeModal(passwordBackdrop);
+      } catch (err) {
+        showAlert("error", err?.response?.data?.message || "Failed to update password.");
+      } finally {
+        btnConfirmSetPassword.disabled = false; btnConfirmSetPassword.classList.remove("opacity-70");
+      }
+    }
+
     function downloadCsv(rows){
       const headers = ["id","full_name","username","email","phone","country","city","is_verified","account_status","main_balance","profit_balance","investment_balance","created_at"];
       const lines = [headers.join(",")];
@@ -940,6 +1142,7 @@
     }
 
     // events
+    btnOpenCreate.addEventListener("click", () => openModal(createBackdrop));
     btnReload.addEventListener("click", loadUsers);
     btnBootstrapAll.addEventListener("click", bootstrapAllCrypto);
 
@@ -973,11 +1176,18 @@
 
     btnViewPin.addEventListener("click", viewPin);
     btnSetPin.addEventListener("click", setPin);
+    btnSetPassword.addEventListener("click", openPasswordModal);
 
     btnClosePin.addEventListener("click", () => closeModal(pinBackdrop));
     pinBackdrop.addEventListener("click", (e) => { if (e.target === pinBackdrop) closeModal(pinBackdrop); });
 
     btnConfirmSetPin.addEventListener("click", confirmSetPin);
+    btnCloseCreate.addEventListener("click", () => closeModal(createBackdrop));
+    createBackdrop.addEventListener("click", (e) => { if (e.target === createBackdrop) closeModal(createBackdrop); });
+    btnCreateUser.addEventListener("click", createUser);
+    btnClosePassword.addEventListener("click", () => closeModal(passwordBackdrop));
+    passwordBackdrop.addEventListener("click", (e) => { if (e.target === passwordBackdrop) closeModal(passwordBackdrop); });
+    btnConfirmSetPassword.addEventListener("click", confirmSetPassword);
 
     // init
     (function init(){
