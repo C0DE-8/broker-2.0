@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Interb Marketfx — Dashboard</title>
+  <title>Up Coin Meta — Dashboard</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="../assets/js/app-config.js"></script>
+  <script src="../api/app-config.js"></script>
 
   <!-- ✅ TradingView (Advanced Chart) -->
   <script src="https://s3.tradingview.com/tv.js"></script>
@@ -530,7 +530,7 @@
           </a>
           </div>
           <div class="min-w-0">
-            <div class="txt-h1 leading-[1.05] truncate">Interb Marketfx</div>
+            <div class="txt-h1 leading-[1.05] truncate">Up Coin Meta</div>
             <div class="txt-sm t-dim truncate">Investment dashboard</div>
           </div>
         </div>
@@ -774,7 +774,7 @@
       </section>
 
       <footer class="mt-8 text-center text-xs t-dim pb-10">
-        2018 © <span id="yr"></span> Interb Marketfx • Investment Services
+        2018 © <span id="yr"></span> Up Coin Meta • Investment Services
       </footer>
 
     </main>
@@ -1056,7 +1056,7 @@
     }
 
     function renderUserHeader(user) {
-      const name = user?.username || user?.full_name || "Interb Marketfx";
+      const name = user?.username || user?.full_name || "Up Coin Meta";
       hdrName.classList.remove("skeleton");
       hdrName.innerHTML = `
         <span class="verified">

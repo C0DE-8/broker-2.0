@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Interb Marketfx — Profile</title>
+  <title>Up Coin Meta — Profile</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="../assets/js/app-config.js"></script>
+  <script src="../api/app-config.js"></script>
 
   <style>
     :root{
@@ -447,7 +447,7 @@
         <div class="brand min-w-0">
           <img src="assets/icon/favicon.svg" alt="">
           <div class="min-w-0">
-            <div class="name truncate">Interb Marketfx</div>
+            <div class="name truncate">Up Coin Meta</div>
             <div class="sub truncate" id="sideUserEmail">—</div>
           </div>
         </div>
@@ -468,7 +468,7 @@
       <div class="brand">
         <img src="assets/icon/favicon.svg" alt="">
         <div class="min-w-0">
-          <div class="name truncate">Interb Marketfx</div>
+          <div class="name truncate">Up Coin Meta</div>
           <div class="sub truncate" id="sideUserEmailDesktop">—</div>
         </div>
       </div>
@@ -613,7 +613,7 @@
         </section>
 
         <footer class="mt-8 text-center text-xs t-dim pb-10">
-          © <span id="yr"></span> Interb Marketfx • Investment Services
+          © <span id="yr"></span> Up Coin Meta • Investment Services
         </footer>
       </div>
     </section>
@@ -833,7 +833,7 @@
     }
 
     function renderProfile(user){
-      const name = user?.full_name || user?.username || "Interb Marketfx";
+      const name = user?.full_name || user?.username || "Up Coin Meta";
       const username = user?.username ? `@${user.username}` : "—";
       const email = user?.email || "—";
 

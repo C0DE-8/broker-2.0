@@ -7,7 +7,7 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="../assets/js/app-config.js"></script>
+  <script src="../api/app-config.js"></script>
 
   <style>
     :root{
@@ -884,7 +884,7 @@
     const hdrInitial = document.getElementById("hdrInitial");
 
     function renderUserHeader(user) {
-      const name = user?.username || user?.full_name || "Interb Marketfx";
+      const name = user?.username || user?.full_name || "Up Coin Meta";
       hdrName.classList.remove("skeleton");
       hdrName.textContent = name;
       hdrInitial.textContent = (String(name).trim().slice(0,1).toUpperCase() || "U");

@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Interb Marketfx — Transactions</title>
+  <title>Up Coin Meta — Transactions</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="../assets/js/app-config.js"></script>
+  <script src="../api/app-config.js"></script>
 
   <style>
     :root{
@@ -470,7 +470,7 @@
       </section>
 
       <footer class="mt-8 text-center text-xs t-dim pb-10">
-        © <span id="yr"></span> Interb Marketfx • Investment Services
+        © <span id="yr"></span> Up Coin Meta • Investment Services
       </footer>
 
     </main>
@@ -627,7 +627,7 @@
     }
 
     function renderUserHeader(user) {
-      const name = user?.username || user?.full_name || "Interb Marketfx";
+      const name = user?.username || user?.full_name || "Up Coin Meta";
       const hdrName = document.getElementById("hdrName");
       const hdrInitial = document.getElementById("hdrInitial");
       hdrName.classList.remove("skeleton");

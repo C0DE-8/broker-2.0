@@ -1,6 +1,6 @@
 (function initAppConfig() {
-  const API_ROOT = "http://localhost:2080/api";
-  const IMAGE_ROOT = "http://localhost:2080/images";
+  const API_ROOT = "https://api.upcoinmeta.middlesvilletrusted.com/api";
+  const IMAGE_ROOT = "https://api.upcoinmeta.middlesvilletrusted.com/images";
 
   const trimTrailingSlash = (value) => String(value || "").replace(/\/+$/, "");
   const withLeadingSlash = (value) => {
