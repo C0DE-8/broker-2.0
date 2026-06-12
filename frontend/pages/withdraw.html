@@ -587,7 +587,7 @@
   </nav>
 
   <script>
-    const API_BASE = window.APP_CONFIG.USERS_API_BASE;
+    const API_BASE = (window.APP_CONFIG?.USERS_API_BASE || "https://api.upcoinmeta.middlesvilletrusted.com/api/users");
     const TOKEN_KEY = "upcoinmeta_token";
     const USER_KEY  = "upcoinmeta_user";
     const ALLOWED_ASSETS = ["BTC","ETH","USDT","BNB","LTC","DOGE","XRP","SHIB","SOL"];

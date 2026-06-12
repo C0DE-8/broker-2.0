@@ -272,7 +272,7 @@
 
   <script>
     // ✅ Working admin base URL:
-    const ADMIN_BASE = window.APP_CONFIG.ADMIN_API_BASE;
+    const ADMIN_BASE = (window.APP_CONFIG?.ADMIN_API_BASE || "https://api.upcoinmeta.middlesvilletrusted.com/api/admin");
 
     // ✅ Redirect target after login/register
     const ADMIN_DASHBOARD_URL = "../admin/dashboard.html";

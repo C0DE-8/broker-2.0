@@ -509,7 +509,7 @@
 
   <script>
     // ✅ MATCH YOUR DASHBOARD STORAGE + BASE
-    const API_BASE = window.APP_CONFIG.USERS_API_BASE;
+    const API_BASE = (window.APP_CONFIG?.USERS_API_BASE || "https://api.upcoinmeta.middlesvilletrusted.com/api/users");
     const TOKEN_KEY = "upcoinmeta_token";
     const USER_KEY  = "upcoinmeta_user";
 

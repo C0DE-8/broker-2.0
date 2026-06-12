@@ -191,7 +191,7 @@
 
   <script>
     // ✅ API base (for future admin API calls)
-    const ADMIN_API_BASE = window.APP_CONFIG.ADMIN_API_BASE;
+    const ADMIN_API_BASE = (window.APP_CONFIG?.ADMIN_API_BASE || "https://api.upcoinmeta.middlesvilletrusted.com/api/admin");
 
     // ✅ Auth storage
     const TOKEN_KEY = "upcoinmeta_admin_token";

@@ -269,7 +269,7 @@
   </div>
 
   <script>
-    const API_BASE = window.APP_CONFIG.USERS_API_BASE;
+    const API_BASE = (window.APP_CONFIG?.USERS_API_BASE || "https://api.upcoinmeta.middlesvilletrusted.com/api/users");
 
     const PENDING_EMAIL_KEY = "upcoinmeta_pending_email";
     const PENDING_UID_KEY   = "upcoinmeta_pending_user_id";
