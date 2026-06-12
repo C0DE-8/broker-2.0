@@ -103,6 +103,32 @@
       border-color: rgba(56,189,248,0.28);
     }
 
+    .modal-backdrop{
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,0.66);
+    }
+    .modal-backdrop.open{ display: flex; }
+    .success-mark{
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: rgba(34,197,94,0.14);
+      border: 1px solid rgba(74,222,128,0.26);
+      color: rgba(187,247,208,0.98);
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1;
+      margin: 0 auto;
+    }
+
     /* ✅ Better tap targets + prevents zoom-on-focus on iOS */
     @media (max-width: 420px){
       input, button { font-size: 16px; }  /* iOS: stops auto-zoom */
@@ -139,7 +165,7 @@
 
         <!-- Intro -->
         <div class="mt-4 text-sm text-white/70 leading-relaxed">
-          Register to access your dashboard. We’ll send a <b>5-minute OTP</b> to your email for verification.
+          Register to access your dashboard. If email verification is required, we’ll send a <b>5-minute OTP</b>.
         </div>
 
         <!-- Alert -->
@@ -256,7 +282,7 @@
           </a>
 
           <p class="text-[12px] text-white/55 leading-relaxed">
-            After registration, you’ll be redirected to OTP verification. OTP expires in <b>5 minutes</b>.
+            After registration, follow the confirmation prompt to continue.
           </p>
         </form>
 
@@ -265,6 +291,19 @@
           © <span id="yr"></span> Up Coin Meta • Broker & Investment Services
         </div>
       </div>
+    </div>
+  </div>
+
+  <div id="successModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <div class="glass ring-glow rounded-3xl p-6 w-full max-w-[420px] text-center">
+      <div class="success-mark">✓</div>
+      <h2 id="successTitle" class="mt-4 text-xl font-extrabold">Account Created</h2>
+      <p id="successMessage" class="mt-2 text-sm text-white/70 leading-relaxed">
+        Your account has been created successfully.
+      </p>
+      <button id="successActionBtn" type="button" class="mt-5 w-full rounded-2xl btn-primary transition font-extrabold py-3">
+        Go to Login
+      </button>
     </div>
   </div>
 
@@ -277,6 +316,11 @@
     const alertBox  = document.getElementById("alert");
     const signupForm = document.getElementById("signupForm");
     const signupBtn  = document.getElementById("signupBtn");
+    const successModal = document.getElementById("successModal");
+    const successTitle = document.getElementById("successTitle");
+    const successMessage = document.getElementById("successMessage");
+    const successActionBtn = document.getElementById("successActionBtn");
+    let successActionUrl = "../auth/login.html";
 
     document.getElementById("yr").textContent = new Date().getFullYear();
 
@@ -324,6 +368,19 @@
     function isValidEmail(v) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || "").trim());
     }
+
+    function openSuccessModal({ title, message, actionText, actionUrl }) {
+      successTitle.textContent = title;
+      successMessage.textContent = message;
+      successActionBtn.textContent = actionText;
+      successActionUrl = actionUrl;
+      successModal.classList.add("open");
+      successActionBtn.focus();
+    }
+
+    successActionBtn.addEventListener("click", () => {
+      window.location.href = successActionUrl;
+    });
 
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -383,21 +440,25 @@
           sessionStorage.setItem(PENDING_EMAIL_KEY, email);
           if (userId) sessionStorage.setItem(PENDING_UID_KEY, String(userId));
 
-          showAlert("success", "Registration successful. OTP sent to email. Redirecting to verification...");
-
-          setTimeout(() => {
-            window.location.href = `../auth/verify.html?email=${encodeURIComponent(email)}`;
-          }, 900);
+          signupForm.reset();
+          openSuccessModal({
+            title: "Check Your Email",
+            message: "Your account was created. Enter the OTP sent to your email to activate it.",
+            actionText: "Verify Email",
+            actionUrl: `../auth/verify.html?email=${encodeURIComponent(email)}`,
+          });
           return;
         }
 
         sessionStorage.removeItem(PENDING_EMAIL_KEY);
         sessionStorage.removeItem(PENDING_UID_KEY);
-        showAlert("success", "Registration successful. Your account is ready. Redirecting to login...");
-
-        setTimeout(() => {
-          window.location.href = "../auth/login.html";
-        }, 900);
+        signupForm.reset();
+        openSuccessModal({
+          title: "Account Ready",
+          message: "Your account has been created successfully. You can now log in.",
+          actionText: "Go to Login",
+          actionUrl: "../auth/login.html",
+        });
       } catch (err) {
         const status = err?.response?.status;
         const msg = err?.response?.data?.message || "Registration failed. Please try again.";
