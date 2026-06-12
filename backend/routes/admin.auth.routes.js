@@ -10,6 +10,7 @@ const auth = require("../middleware/auth");
 const adminOnly = require("../middleware/adminOnly");
 const { sendMail, sendMailText, sendMailHTML } = require("../utils/mailer");
 const { traderUpload } = require("../middleware/traderUpload");
+const { isRegistrationOtpEnabled, setSetting } = require("../utils/appSettings");
 
 // Simple HTML wrapper for admin emails (since baseTemplate isn't exported)
 function adminEmailTemplate({ subject, message }) {
@@ -169,6 +170,30 @@ router.post("/login", async (req, res) => {
 
     const token = signToken({ id: admin.id, role: "admin", email: admin.email });
     return res.json({ message: "Logged in", token, admin: { id: admin.id, name: admin.name, email: admin.email } });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error", error: String(err) });
+  }
+});
+
+// -------------------------- Registration OTP Setting ------------------------ //
+router.get("/settings/registration-otp", auth, adminOnly, async (req, res) => {
+  try {
+    const enabled = await isRegistrationOtpEnabled();
+    return res.json({ registration_otp_enabled: enabled });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error", error: String(err) });
+  }
+});
+
+router.put("/settings/registration-otp", auth, adminOnly, async (req, res) => {
+  try {
+    const enabled = Number(req.body?.enabled) === 1 || req.body?.enabled === true;
+    await setSetting("registration_otp_enabled", enabled ? "1" : "0");
+
+    return res.json({
+      message: enabled ? "Registration OTP enabled" : "Registration OTP disabled",
+      registration_otp_enabled: enabled,
+    });
   } catch (err) {
     return res.status(500).json({ message: "Server error", error: String(err) });
   }

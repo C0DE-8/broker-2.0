@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const pool = require("../db");
 const auth = require("../middleware/auth");
 const { sendOTPEmail, sendLoginAlertEmail, sendPasswordResetEmail } = require("../utils/mailer");
+const { isRegistrationOtpEnabled } = require("../utils/appSettings");
 const moment = require("moment");
 const { kycUpload } = require("../middleware/kycUpload");
 const { upsUpload } = require("../middleware/ups-upload");
@@ -81,12 +82,13 @@ router.post("/register", async (req, res) => {
     if (exists.length) return res.status(409).json({ message: "Email already registered" });
 
     const hash = await bcrypt.hash(String(password), 12);
+    const registrationOtpEnabled = await isRegistrationOtpEnabled();
 
     const [result] = await pool.query(
       `
       INSERT INTO users
       (full_name, username, address, city, zipcode, country, phone, email, password_hash, role, is_verified, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'user', 0, NOW())
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'user', ?, NOW())
       `,
       [
         String(full_name).trim(),
@@ -98,8 +100,19 @@ router.post("/register", async (req, res) => {
         String(phone).trim(),
         cleanEmail,
         hash,
+        registrationOtpEnabled ? 0 : 1,
       ]
     );
+
+    if (!registrationOtpEnabled) {
+      await pool.query("DELETE FROM email_otps WHERE email = ?", [cleanEmail]);
+
+      return res.json({
+        message: "Registration successful. Account verified.",
+        user_id: result.insertId,
+        otp_required: false,
+      });
+    }
 
     // clear any old OTPs for this email
     await pool.query("DELETE FROM email_otps WHERE email = ?", [cleanEmail]);
@@ -124,6 +137,7 @@ router.post("/register", async (req, res) => {
     return res.json({
       message: "Registration successful. OTP sent to email.",
       user_id: result.insertId,
+      otp_required: true,
     });
   } catch (err) {
     return res.status(500).json({ message: "Server error", error: String(err) });

@@ -256,7 +256,7 @@
       const tok = getToken();
       if (!tok) {
         // no token -> back to admin login
-        window.location.href = "/admin/index.html";
+        window.location.href = "./index.html";
         return false;
       }
       return true;
@@ -317,7 +317,7 @@
       localStorage.removeItem(ADMIN_KEY);
       showAlert("success", "Logged out. Redirecting…");
       setTimeout(() => {
-        window.location.href = "/admin/index.html";
+        window.location.href = "./index.html";
       }, 500);
     });
   </script>

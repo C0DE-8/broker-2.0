@@ -76,6 +76,26 @@ INSERT INTO `admins` (`id`, `name`, `email`, `password_hash`, `created_at`) VALU
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `app_settings`
+--
+
+CREATE TABLE `app_settings` (
+  `setting_key` varchar(100) NOT NULL,
+  `setting_value` varchar(255) NOT NULL,
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`setting_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `app_settings`
+--
+
+INSERT INTO `app_settings` (`setting_key`, `setting_value`, `updated_at`) VALUES
+('registration_otp_enabled', '1', current_timestamp());
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `copy_traders`
 --
 

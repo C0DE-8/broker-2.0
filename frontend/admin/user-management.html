@@ -217,7 +217,7 @@
         <div id="alert" class="hidden mt-5 rounded-2xl px-4 py-3 text-sm soft-border"></div>
 
         <!-- Controls -->
-        <div class="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="mt-5 grid grid-cols-1 lg:grid-cols-4 gap-4">
           <div class="rounded-3xl card p-4">
             <div class="text-xs text-white/55 font-semibold">Search</div>
             <input id="q" class="mt-2 w-full rounded-2xl input px-4 py-3"
@@ -250,6 +250,18 @@
             <div class="mt-3 flex items-center gap-2">
               <button id="btnExport" class="rounded-2xl btn-ghost px-4 py-3 font-extrabold w-full">Export CSV (filtered)</button>
             </div>
+          </div>
+
+          <div class="rounded-3xl card p-4">
+            <div class="text-xs text-white/55 font-semibold">Register OTP</div>
+            <select id="registrationOtpSetting" class="mt-2 w-full rounded-2xl input px-4 py-3">
+              <option value="1">On - require OTP</option>
+              <option value="0">Off - auto verify</option>
+            </select>
+            <div class="mt-3 flex items-center gap-2">
+              <button id="btnSaveRegistrationOtp" class="rounded-2xl btn-primary px-4 py-3 font-extrabold w-full">Save OTP Setting</button>
+            </div>
+            <div class="mt-2 text-xs text-white/45" id="registrationOtpMeta">Loading setting...</div>
           </div>
         </div>
 
@@ -644,6 +656,9 @@
     const btnBootstrapAll = document.getElementById("btnBootstrapAll");
     const btnLogout = document.getElementById("btnLogout");
     const btnExport = document.getElementById("btnExport");
+    const registrationOtpSetting = document.getElementById("registrationOtpSetting");
+    const registrationOtpMeta = document.getElementById("registrationOtpMeta");
+    const btnSaveRegistrationOtp = document.getElementById("btnSaveRegistrationOtp");
 
     // Manage modal
     const manageBackdrop = document.getElementById("manageBackdrop");
@@ -747,6 +762,40 @@
       if (!d) return "—";
       const dt = new Date(d);
       return Number.isNaN(dt.getTime()) ? String(d) : dt.toLocaleString();
+    }
+
+    function renderRegistrationOtpSetting(enabled){
+      registrationOtpSetting.value = enabled ? "1" : "0";
+      registrationOtpMeta.textContent = enabled
+        ? "New users must verify by email OTP."
+        : "New users are verified immediately after registration.";
+    }
+
+    async function loadRegistrationOtpSetting(){
+      try {
+        const res = await api().get("/settings/registration-otp");
+        renderRegistrationOtpSetting(res.data?.registration_otp_enabled !== false);
+      } catch (err) {
+        registrationOtpMeta.textContent = "Failed to load OTP setting.";
+        showAlert("error", err?.response?.data?.message || "Failed to load registration OTP setting.");
+      }
+    }
+
+    async function saveRegistrationOtpSetting(){
+      btnSaveRegistrationOtp.disabled = true;
+      btnSaveRegistrationOtp.classList.add("opacity-70");
+
+      try {
+        const enabled = registrationOtpSetting.value === "1";
+        const res = await api().put("/settings/registration-otp", { enabled });
+        renderRegistrationOtpSetting(res.data?.registration_otp_enabled !== false);
+        showAlert("success", res.data?.message || "Registration OTP setting saved.");
+      } catch (err) {
+        showAlert("error", err?.response?.data?.message || "Failed to save registration OTP setting.");
+      } finally {
+        btnSaveRegistrationOtp.disabled = false;
+        btnSaveRegistrationOtp.classList.remove("opacity-70");
+      }
     }
 
     function applyFilters(){
@@ -1145,6 +1194,7 @@
     btnOpenCreate.addEventListener("click", () => openModal(createBackdrop));
     btnReload.addEventListener("click", loadUsers);
     btnBootstrapAll.addEventListener("click", bootstrapAllCrypto);
+    btnSaveRegistrationOtp.addEventListener("click", saveRegistrationOtpSetting);
 
     btnLogout.addEventListener("click", () => {
       localStorage.removeItem(TOKEN_KEY);
@@ -1193,6 +1243,7 @@
     (function init(){
       if (!requireAuthOrRedirect()) return;
       loadUsers();
+      loadRegistrationOtpSetting();
     })();
   </script>
 </body>
